@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 
 function App() {
@@ -6,31 +6,36 @@ function App() {
   const [numAllow, setNumAllow] = useState(true)
   const [charAllow, setCharAllow] = useState(true)
   const [password, setPassword] = useState("")
+
+  // UseRef Hook
+  const passwordRef = useRef(null);
   
   const passwordGenerator = useCallback( () => {
     let pass = ""
     let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     if (numAllow) str += "0123456789";
     if (charAllow) str += "!@#$%&*+/?";
+    let strLen = str.length + 1;
 
-    for (let i = 1; i <= length; i++) {
-      let char = Math.floor(Math.random() * str.length + 1)
-      pass += str.charAt(char)   
+    for (let i = 0; i < length; i++) {
+      let charIndex = Math.floor(Math.random() * strLen)
+      pass += str.charAt(charIndex) 
     }
 
     setPassword(pass)
   
   }, [length, numAllow, charAllow, setPassword])
 
-  const copyPassToClipboard = useCallback(() => {
-    window.navigator.clipboard.writeText(password)
-  }, [password])
-
   useEffect( () => {
     passwordGenerator()
   }, [length, numAllow, charAllow, passwordGenerator])
+  
 
-
+  const copyPassToClipboard = useCallback(() => {
+    passwordRef.current?.select()
+    window.navigator.clipboard.writeText(password)
+  }, [password])
+  
   return (
     <>
       <h1 className='text-4xl text-center'>Password Generator</h1>
@@ -42,10 +47,11 @@ function App() {
           className='outline-none w-full py-1 px-3'
           placeholder='password'
           readOnly
+          ref={passwordRef}
           />
           <button
           onClick={copyPassToClipboard}
-          className='bg-blue-900 text-sm p-3 text-white'
+          className='bg-blue-900 text-sm p-3 text-white hover:bg-blue-500 active:text-blue-900'
           >
             COPY
           </button>
@@ -56,10 +62,11 @@ function App() {
             <input type="range"
             min={6}
             max={30}
+            id="range"
             className='cursor-pointer'
             onChange={(e) => {setLength(e.target.value)}}
             />
-            <label htmlFor="type">Lenght: {length}</label>
+            <label htmlFor="range">Lenght: {length}</label>
           </div>
 
           <div className="flex items-center gap-x-1">
