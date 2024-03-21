@@ -15,9 +15,9 @@ function GitHub() {
 
   return (
     <div className='text-center m-8 text-3xl'>
-        GitHub Followers: {data.followers}
+        GitHub Repositories: <span className='font-bold'>{data.public_repos}</span>
         <div className='flex justify-center mt-5'>
-            <img src={data.avatar_url} alt="profile picture" width={300}/>
+            <img className='box-border rounded-xl' src={data.avatar_url} alt="profile picture" width={300}/>
         </div>
     </div>
   )
